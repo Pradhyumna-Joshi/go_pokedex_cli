@@ -1,41 +1,40 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"os"
+	"time"
+
+	"github.com/Pradhyumna-Joshi/go_pokedex/internal/api"
+	"github.com/Pradhyumna-Joshi/go_pokedex/internal/cmd"
+	"github.com/Pradhyumna-Joshi/go_pokedex/internal/config"
 )
 
 func main() {
-	scanner := bufio.NewScanner(os.Stdin)
-	for {
-		fmt.Print("Pokedex > ")
-
-		scanner.Scan()
-		input := scanner.Text()
-		words := CleanInput(input)
-
-		command := words[0]
-
-		switch command {
-		case "exit":
-			if cmd, ok := Commands[command]; ok {
-				if err := cmd.callback(); err != nil {
-					fmt.Println(err)
-					return
-				}
-			}
-		case "help":
-			if cmd, ok := Commands[command]; ok {
-				if err := cmd.callback(); err != nil {
-					fmt.Println(err)
-					return
-				}
-				displayCommands()
-			}
-		default:
-			fmt.Println("Unknown command")
-		}
-
+	client := api.NewClient(3 * time.Second)
+	conf := &config.Config{
+		Commands: map[string]config.CliCommand{
+			"exit": {
+				Name:        "exit",
+				Description: "Exit the Pokedex",
+				Callback:    cmd.CommandExit,
+			},
+			"help": {
+				Name:        "help",
+				Description: "Displays a help message",
+				Callback:    cmd.CommandHelp,
+			},
+			"map": {
+				Name:        "map",
+				Description: "Displays the names of 20 location areas in the Pokemon world",
+				Callback:    cmd.CommandMapNext,
+			},
+			"mapb": {
+				Name:        "mapb",
+				Description: "Displays the previous names of 20 location areas in the Pokemon world",
+				Callback:    cmd.CommandMapPrev,
+			},
+		},
+		HttpClient: client,
 	}
+
+	startRepl(conf)
 }
