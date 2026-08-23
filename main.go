@@ -47,6 +47,11 @@ func main() {
 				Description: "Displays details about <pokemon_name>.",
 				Callback:    cmd.CommandInspect,
 			},
+			"pokedex": {
+				Name:        "pokedex",
+				Description: "Displays all caught pokemons.",
+				Callback:    cmd.CommandPokedex,
+			},
 		},
 		ApiClient: client,
 		Pokedex:   map[string]api.Pokemon{},
