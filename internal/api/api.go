@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -15,23 +16,38 @@ func HandleApiRequest[T any](c *Client, pageURL *string) (T, error) {
 		url = *pageURL
 	}
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return zero, err
-	}
+	var data []byte
 
-	res, err := c.httpClient.Do(req)
-	if err != nil {
-		return zero, err
-	}
-	defer res.Body.Close()
+	entry, exists := c.cache.Get(url)
+	if exists {
+		fmt.Println("FROM CACHE")
+		fmt.Println()
+		data = entry
+	} else {
+		req, err := http.NewRequest(http.MethodGet, url, nil)
+		if err != nil {
+			return zero, err
+		}
 
-	if res.StatusCode != http.StatusOK {
-		return zero, fmt.Errorf("HTTP Error : %s", res.Status)
+		response, err := c.httpClient.Do(req)
+		if err != nil {
+			return zero, err
+		}
+		defer response.Body.Close()
+
+		if response.StatusCode != http.StatusOK {
+			return zero, fmt.Errorf("HTTP Error : %s", response.Status)
+		}
+
+		data, err = io.ReadAll(response.Body)
+		if err != nil {
+			return zero, err
+		}
+		c.cache.Add(url, data)
 	}
 
 	var resp T
-	if err := json.NewDecoder(res.Body).Decode(&resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return zero, err
 	}
 

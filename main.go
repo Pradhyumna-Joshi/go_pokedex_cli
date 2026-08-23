@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	client := api.NewClient(3 * time.Second)
+	client := api.NewClient(5*time.Second, 2*time.Minute)
 	conf := &config.Config{
 		Commands: map[string]config.CliCommand{
 			"exit": {
@@ -32,8 +32,24 @@ func main() {
 				Description: "Displays the previous names of 20 location areas in the Pokemon world",
 				Callback:    cmd.CommandMapPrev,
 			},
+			"explore": {
+				Name:        "explore <area_name>",
+				Description: "Lists all Pokémons in <area_name>",
+				Callback:    cmd.CommandExplore,
+			},
+			"catch": {
+				Name:        "catch <pokemon_name>",
+				Description: "Attempt to catch <pokemon_name> and add to the user's Pokedex.",
+				Callback:    cmd.CommandCatch,
+			},
+			"inspect": {
+				Name:        "inspect <pokemon_name>",
+				Description: "Displays details about <pokemon_name>.",
+				Callback:    cmd.CommandInspect,
+			},
 		},
-		HttpClient: client,
+		ApiClient: client,
+		Pokedex:   map[string]api.Pokemon{},
 	}
 
 	startRepl(conf)
