@@ -6,6 +6,7 @@ import (
 	"github.com/Pradhyumna-Joshi/go_pokedex/internal/api"
 	"github.com/Pradhyumna-Joshi/go_pokedex/internal/cmd"
 	"github.com/Pradhyumna-Joshi/go_pokedex/internal/config"
+	"github.com/Pradhyumna-Joshi/go_pokedex/internal/repl"
 )
 
 func main() {
@@ -14,42 +15,42 @@ func main() {
 		Commands: map[string]config.CliCommand{
 			"exit": {
 				Name:        "exit",
-				Description: "Exit the Pokedex",
+				Description: "Exit the Pokedex.",
 				Callback:    cmd.CommandExit,
 			},
 			"help": {
 				Name:        "help",
-				Description: "Displays a help message",
+				Description: "Display available commands and their descriptions.",
 				Callback:    cmd.CommandHelp,
 			},
 			"map": {
 				Name:        "map",
-				Description: "Displays the names of 20 location areas in the Pokemon world",
+				Description: "Display the next 20 location areas in the Pokémon world.",
 				Callback:    cmd.CommandMapNext,
 			},
 			"mapb": {
 				Name:        "mapb",
-				Description: "Displays the previous names of 20 location areas in the Pokemon world",
+				Description: "Display the previous 20 location areas in the Pokémon world.",
 				Callback:    cmd.CommandMapPrev,
 			},
 			"explore": {
 				Name:        "explore <area_name>",
-				Description: "Lists all Pokémons in <area_name>",
+				Description: "List the Pokémon found in a location area.",
 				Callback:    cmd.CommandExplore,
 			},
 			"catch": {
 				Name:        "catch <pokemon_name>",
-				Description: "Attempt to catch <pokemon_name> and add to the user's Pokedex.",
+				Description: "Attempt to catch a Pokémon and add it to your Pokedex.",
 				Callback:    cmd.CommandCatch,
 			},
 			"inspect": {
 				Name:        "inspect <pokemon_name>",
-				Description: "Displays details about <pokemon_name>.",
+				Description: "Display details about a caught Pokémon.",
 				Callback:    cmd.CommandInspect,
 			},
 			"pokedex": {
 				Name:        "pokedex",
-				Description: "Displays all caught pokemons.",
+				Description: "Display all Pokémon in your Pokedex.",
 				Callback:    cmd.CommandPokedex,
 			},
 		},
@@ -57,5 +58,5 @@ func main() {
 		Pokedex:   map[string]api.Pokemon{},
 	}
 
-	startRepl(conf)
+	repl.StartRepl(conf)
 }
